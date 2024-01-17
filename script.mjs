@@ -2,6 +2,38 @@
 
 async function main() {
   try {
+    // intro with ASCII art and color
+    console.log(`
+    \x1b[36m
+      ______________  _____ ____________
+      / ____/  _/ __ \\/ ___// ____/_  __/
+     / /_   / // /_/ /\\__ \\/ __/   / /   
+    / __/ _/ // _, _/___/ / /___  / /    
+   /_/   /___/_/ |_|/____/_____/ /_/    
+    \x1b[0m
+    `);
+
+    // input username
+    console.log("please enter your github username:")
+    const username = await stdin();
+
+
+    // get email
+    console.log("please enter your github email:")
+    const email = await stdin();
+
+    // set git config
+    await $`git config --global user.name ${username}`.catch((err) => {
+      console.error("Error setting git username:", err);
+      process.exit(1);
+    }
+    );
+    await $`git config --global user.email ${email}`.catch((err) => {
+      console.error("Error setting git email:", err);
+      process.exit(1);
+    }
+    );
+
     // Check if GitHub CLI is installed
     await $`which gh`.catch(() => {
       console.log("Installing GitHub CLI...");
