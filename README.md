@@ -9,5 +9,5 @@
 
 ## How to use
 ```bash
-curl -sSL [address] | bash
+curl -sSL https://raw.githubusercontent.com/froy-bookips/firset/main/main.sh | bash
 ```
