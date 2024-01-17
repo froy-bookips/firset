@@ -1,26 +1,30 @@
 #!/usr/bin/env zx
 
+
+
 async function main() {
   try {
     // intro with ASCII art and color
     console.log(`
     \x1b[36m
-      ______________  _____ ____________
+  First time setup CLI Tool
+  https://github.com/froy-bookips/firset
+       ______________  _____ ____________
       / ____/  _/ __ \\/ ___// ____/_  __/
      / /_   / // /_/ /\\__ \\/ __/   / /   
     / __/ _/ // _, _/___/ / /___  / /    
    /_/   /___/_/ |_|/____/_____/ /_/    
+   
+   This script will generate an SSH key and register it with GitHub.
     \x1b[0m
     `);
 
     // input username
-    console.log("please enter your github username:")
-    const username = await stdin();
+    const username = await question("• please enter your github username: ");
 
 
     // get email
-    console.log("please enter your github email:")
-    const email = await stdin();
+    const email = await question("• please enter your github username: ");
 
     // set git config
     await $`git config --global user.name ${username}`.catch((err) => {
@@ -59,11 +63,11 @@ async function main() {
       process.exit(1);
     });
     
-    // // gh auth refresh -h github.com -s admin:public_key
-    // await $`gh auth refresh -h github.com -s admin:public_key`.catch((err) => {
-    //   console.error("Error refreshing GitHub auth:", err);
-    //   process.exit(1);
-    // });
+    // gh auth refresh -h github.com -s admin:public_key
+    await $`gh auth refresh -h github.com -s admin:public_key`.catch((err) => {
+      console.error("Error refreshing GitHub auth:", err);
+      process.exit(1);
+    });
 
     // Generate SSH key
     const keyPath = `${os.homedir()}/.ssh/id_rsa`;
