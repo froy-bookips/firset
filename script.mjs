@@ -89,6 +89,55 @@ async function main() {
       process.exit(1);
     });
 
+    // Check if Azure CLI is installed
+    await $`az --version`.catch(() => {
+      console.log("Installing Azure CLI...");
+      if (process.platform === "linux") {
+        $`curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash`.catch(() => {
+          console.error("Failed to install Azure CLI on Linux.");
+          process.exit(1);
+        });
+      } else if (process.platform === "darwin") {
+        $`brew install azure-cli`.catch(() => {
+          console.error("Failed to install Azure CLI on macOS.");
+          process.exit(1);
+        });
+      } else {
+        console.error("Unsupported platform for automatic installation of Azure CLI.");
+        process.exit(1);
+      }
+    });
+
+    // Add Azure DevOps extension
+    await $`az extension add --name azure-devops`.catch((err) => {
+      console.error("Error adding Azure DevOps extension:", err);
+      process.exit(1);
+    });
+
+    // Azure login
+    await $`az login`.catch((err) => {
+      console.error("Error logging into Azure:", err);
+      process.exit(1);
+    });
+
+    // Azure DevOps login
+    await $`az devops login`.catch((err) => {
+      console.error("Error logging into Azure DevOps:", err);
+      process.exit(1);
+    });
+
+    // Azure ssh key add
+    await $`az pipelines ssh-key add --ssh-public-key-file ${keyPath}.pub`.catch((err) => {
+      console.error("Error adding SSH key to Azure:", err);
+      process.exit(1);
+    });
+
+    // Update ~/.ssh/config
+    await fs.appendFile(sshConfigPath, `\nHost ssh.dev.azure.com\n  IdentityFile ${keyPath}\n`).catch((err) => {
+      console.error("Error updating SSH config:", err);
+      process.exit(1);
+    });
+
     console.log("SSH key generation and registration complete.");
   } catch (err) {
     console.error("An error occurred:", err);
